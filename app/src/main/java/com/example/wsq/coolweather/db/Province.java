@@ -1,5 +1,7 @@
 package com.example.wsq.coolweather.db;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by wsq on 2017/5/23.
  */
