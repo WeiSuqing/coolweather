@@ -2,6 +2,7 @@ package com.example.wsq.coolweather.util;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
@@ -16,9 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wsq.coolweather.R;
+import com.example.wsq.coolweather.WeatherActivity;
 import com.example.wsq.coolweather.db.City;
 import com.example.wsq.coolweather.db.County;
 import com.example.wsq.coolweather.db.Province;
+import com.example.wsq.coolweather.gson.Weather;
 
 import org.litepal.crud.DataSupport;
 
@@ -95,6 +98,19 @@ public class ChooseAreaFragment extends Fragment{
                 }else if (currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }else if (currentLevel == LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity) {       //判断碎片是否在MainActivty中
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {      //碎片在WeatherActivity中
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();             //关闭滑动菜单
+                        activity.swipeRefresh.setRefreshing(true);         //显示下拉刷新进度条
+                        activity.requestWeather(weatherId);                 //请求新城市天气信息
+                    }
                 }
             }
         });
